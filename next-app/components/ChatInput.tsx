@@ -9,6 +9,7 @@ import { useMutation } from 'react-query';
 import { Message } from '@/lib/validators/message';
 import toast from 'react-hot-toast';
 import { nanoid } from 'nanoid';
+import { AiOutlineLoading3Quarters, AiOutlineEnter } from 'react-icons/ai'
 
 interface ChatInputProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -39,6 +40,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, ...props }) => {
           if (!response.ok) {
             throw new Error()
           }
+          console.log(response)
     
           return response.body
         },
@@ -68,6 +70,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, ...props }) => {
             const { value, done: doneReading } = await reader.read()
             done = doneReading
             const chunkValue = decoder.decode(value)
+            console.log(chunkValue)
             updateMessage(id, (prev: string) => prev + chunkValue)
           }
     
@@ -85,10 +88,22 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, ...props }) => {
         },
       })
 
+      const sendMessageHandler = () => {
+        if (input.trim() !== '') {
+          // Prevent sending empty messages
+          const message: Message = {
+            id: nanoid(),
+            isUserMessage: true,
+            text: input,
+          }
+    
+          sendMessage(message)
+        }
+      }
+
 
       return (
-        <div {...props} className={`fixed inset-x-0 bottom-0 p-2 bg-white ${className}`}>
-          {/* Chat input field */}
+        <div {...props} className={`fixed inset-x-0 bottom-0 p-2 bg-white rounded-3xl py-4 px-4 my-4 mx-4 ${className}`}>
           <div className='relative flex items-center w-full'>
             <TextareaAutosize
               className='flex-1 rounded-lg bg-zinc-300 py-1.5 px-4 text-sm text-gray-900 placeholder-gray-500 focus:outline-none disabled:opacity-50'
@@ -105,18 +120,26 @@ const ChatInput: React.FC<ChatInputProps> = ({ className, ...props }) => {
               autoFocus
               placeholder='Write a message...'
             />
-            {/* Send button */}
-            <button
-              type='button'
-              onClick={sendMessageHandler}
-              className='absolute right-2 mr-2 flex items-center justify-center p-2 text-white bg-blue-500 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-            >
-              {/* Replace with a send icon if you have one */}
-              Send
-            </button>
-          </div>
+            <div className='absolute inset-y-0 right-0 flex py-1.5 pr-1.5'>
+          <kbd className='inline-flex items-center rounded border border-gray-200 bg-lightpurple px-1 font-sans text-xs text-white'>
+            {status == 'loading' ? (
+              <AiOutlineLoading3Quarters className='h-3 w-3 animate-spin ' />
+            ) : (
+              <AiOutlineEnter
+                className='h-3 w-3'
+                onClick={sendMessageHandler}
+              />
+            )}
+          </kbd>
         </div>
-      );
+        <div
+          aria-hidden='true'
+          className='border-top absolute inset-x-0 bottom-0 border-gray-300 peer-focus:border-t-2 peer-focus:border-indigo-600'
+        />
+          </div>
+          
+        </div>
+    );;
 }
 
 export default ChatInput

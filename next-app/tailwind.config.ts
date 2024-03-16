@@ -8,10 +8,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        mydrbg: "#272727",
+        mydrlogocolour: "#54938E",
+        lightpurple: "#7A83B2",
+        usermessage: "#D5D9DF",
+        botmessage: "#54938E"
+
       },
     },
   },
