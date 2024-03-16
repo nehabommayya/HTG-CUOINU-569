@@ -1,0 +1,1 @@
+export const chatbotPrompt = "you are a friendly assistant"
